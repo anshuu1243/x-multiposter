@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dukaan Multi-X Poster</title>
+  <title>Mr-KING Multi-Poster</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script>
@@ -32,8 +32,8 @@
           𝕏
         </div>
         <div>
-          <h1 class="font-bold text-base leading-tight">Dukaan Multi-Poster</h1>
-          <p class="text-xs text-gray-400">Sabhi accounts me ek sath post karein</p>
+          <h1 class="font-bold text-base leading-tight">Mr-KING Multi-Poster</h1>
+          <p class="text-xs text-gray-400">Post simultaneously across all accounts</p>
         </div>
       </div>
       <button onclick="changePin()" class="text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 px-2.5 py-1.5 rounded-lg border border-gray-700 flex items-center gap-1.5">
@@ -53,7 +53,7 @@
           <h2 class="font-semibold text-sm">Connected Accounts (<span id="accCount">0</span>)</h2>
         </div>
         <button onclick="openAddModal()" class="text-xs bg-xBlue/10 text-xBlue hover:bg-xBlue/20 font-medium px-2.5 py-1 rounded-full border border-xBlue/30 flex items-center gap-1">
-          <i class="fa-solid fa-plus text-[10px]"></i> Naya Account Jodein
+          <i class="fa-solid fa-plus text-[10px]"></i> Add Twitter Account
         </button>
       </div>
 
@@ -72,7 +72,7 @@
       <!-- Text Input -->
       <div class="relative mb-3">
         <textarea id="postText" rows="5" oninput="updateCharCount()"
-          placeholder="Dukaan ka offer, naya stock ya post yahan likhiye... (280 se lamba text hone par automatic part 1, part 2 bankar thread post ho jayega!)"
+          placeholder="Apna post yaha dale (280 se lamba text hone par automatic part 1, part 2 bankar thread post ho jayega!)"
           class="w-full bg-[#121820] border border-xBorder rounded-xl p-3 text-sm text-gray-100 placeholder-gray-500 focus:outline-none focus:border-xBlue transition resize-none"></textarea>
         <div class="absolute bottom-2.5 right-3 text-xs text-gray-400">
           <span id="charCount">0</span> chars <span id="threadNote" class="text-xBlue font-medium hidden"></span>
@@ -83,7 +83,7 @@
       <div class="mb-4">
         <label for="postImage" class="cursor-pointer flex items-center gap-2 text-xs bg-gray-800 hover:bg-gray-700/80 border border-gray-700 w-fit px-3 py-2 rounded-xl text-gray-200 transition">
           <i class="fa-solid fa-image text-green-400"></i>
-          <span id="imageLabel">Photo Lagayein (Optional)</span>
+          <span id="imageLabel">Photo (Optional)</span>
         </label>
         <input type="file" id="postImage" accept="image/*" class="hidden" onchange="handleImageSelect(event)">
         
@@ -109,7 +109,7 @@
       <!-- Action Button -->
       <button id="postBtn" onclick="submitPost()" class="w-full bg-xBlue hover:bg-[#1a8cd8] text-white font-semibold py-3 rounded-xl transition flex items-center justify-center gap-2 shadow-lg disabled:opacity-50">
         <i class="fa-solid fa-paper-plane"></i>
-        <span>Sabhi Par Post Karein</span>
+        <span>Post In All Account's</span>
       </button>
 
       <!-- Results Display -->
@@ -214,7 +214,7 @@
     function removeImage() {
       document.getElementById('postImage').value = '';
       document.getElementById('imagePreviewContainer').classList.add('hidden');
-      document.getElementById('imageLabel').innerText = 'Photo Lagayein (Optional)';
+      document.getElementById('imageLabel').innerText = 'Photo (Optional)';
     }
 
     async function loadAccounts() {
@@ -242,7 +242,7 @@
       const targetEl = document.getElementById('targetAccountCheckboxes');
 
       if (loadedAccounts.length === 0) {
-        listEl.innerHTML = '<span class="text-xs text-gray-500 py-1">Abhi koi account nahi hai. Upar "+ Naya Account Jodein" click karein.</span>';
+        listEl.innerHTML = '<span class="text-xs text-gray-500 py-1">Abhi koi account nahi hai. "Add Twitter Account" pe click kare.</span>';
         targetEl.innerHTML = '<p class="text-xs text-gray-500">Pehle account add karein.</p>';
         return;
       }
@@ -385,7 +385,7 @@
             <div class="flex items-center justify-between p-2 rounded bg-[#121820] border border-xBorder">
               <span class="font-medium text-gray-300">@${r.username}</span>
               ${r.status === 'success' 
-                ? '<span class="text-green-400 flex items-center gap-1"><i class="fa-solid fa-check"></i> ' + r.message + '</span>'
+                ? '<span class="text-green-400 flex items-center gap-1"><i class="fa-solid fa-check"></i> Posted</span>'
                 : `<span class="text-red-400 flex items-center gap-1" title="${r.message}"><i class="fa-solid fa-triangle-exclamation"></i> Error: ${r.message.substring(0, 25)}</span>`
               }
             </div>
@@ -404,7 +404,7 @@
         resultItems.innerHTML = '<p class="text-red-400">Request fail ho gayi! Connection check karein.</p>';
       } finally {
         btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> <span>Sabhi Par Post Karein</span>';
+        btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> <span>Post In All Account\'s</span>';
       }
     }
   </script>
