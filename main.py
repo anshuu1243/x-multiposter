@@ -7,22 +7,30 @@ from pathlib import Path
 from typing import List, Optional
 from fastapi import FastAPI, Request, Form, UploadFile, File, HTTPException
 from fastapi.responses import HTMLResponse, JSONResponse
-from fastapi.templating import Jinja2Templates
 from twikit import Client
 
 BASE_DIR = Path(__file__).resolve().parent
 COOKIES_DIR = BASE_DIR / "cookies"
 COOKIES_DIR.mkdir(exist_ok=True)
 ACCOUNTS_FILE = BASE_DIR / "accounts.json"
-TEMPLATES_DIR = BASE_DIR / "templates"
 
 DEFAULT_PIN = os.getenv("DASHBOARD_PIN", "1234")
 
 app = FastAPI(title="X Multi-Account Shop Poster")
-templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
+
+def get_index_html() -> str:
+    # Check both templates/index.html and root index.html
+    possible_paths = [
+        BASE_DIR / "templates" / "index.html",
+        BASE_DIR / "index.html"
+    ]
+    for p in possible_paths:
+        if p.exists():
+            with open(p, "r", encoding="utf-8") as f:
+                return f.read()
+    return "<h1>index.html nahi mila! Kripya GitHub par index.html file upload karein.</h1>"
 
 def split_text_into_chunks(text: str, max_len: int = 265) -> List[str]:
-    """Splits long text into auto-threaded parts if it exceeds Twitter's 280 char limit."""
     text = text.strip()
     if len(text) <= 280:
         return [text]
@@ -47,7 +55,6 @@ def split_text_into_chunks(text: str, max_len: int = 265) -> List[str]:
         chunks.append(" ".join(current_chunk))
 
     total = len(chunks)
-    # Add thread markers like (1/3), (2/3)
     return [f"{chunk} ({i+1}/{total})" for i, chunk in enumerate(chunks)]
 
 def get_saved_accounts() -> List[dict]:
@@ -64,11 +71,9 @@ def save_accounts(accounts: List[dict]):
         json.dump(accounts, f, indent=2)
 
 @app.get("/", response_class=HTMLResponse)
-async def home_page(request: Request):
-    return templates.TemplateResponse("index.html", {
-        "request": request,
-        "default_pin": DEFAULT_PIN
-    })
+async def home_page():
+    html = get_index_html()
+    return HTMLResponse(content=html)
 
 @app.get("/api/accounts")
 async def list_accounts(pin: str = ""):
@@ -143,7 +148,6 @@ async def create_multi_post(
     if not target_usernames:
         return JSONResponse(status_code=400, content={"success": False, "message": "Koi account select nahi kiya!"})
 
-    # Prepare chunks if text is longer than 280 chars
     chunks = split_text_into_chunks(text)
 
     saved_image_path = None
@@ -168,19 +172,16 @@ async def create_multi_post(
                 client = Client(language="en-US")
                 client.load_cookies(str(cookie_path))
 
-                # Handle image upload for the first tweet
                 media_ids = []
                 if saved_image_path:
                     media_id = await client.upload_media(saved_image_path)
                     media_ids.append(media_id)
 
-                # Post first tweet (with media if present)
                 if media_ids:
                     tweet = await client.create_tweet(text=chunks[0], media_ids=media_ids)
                 else:
                     tweet = await client.create_tweet(text=chunks[0])
 
-                # If long post (>280 chars), automatically post remaining as thread replies!
                 last_tweet_id = tweet.id if hasattr(tweet, 'id') else None
                 for reply_chunk in chunks[1:]:
                     await asyncio.sleep(1.5)
